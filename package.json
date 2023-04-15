@@ -1,0 +1,22 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/**/*.js --recursive --timeout 60000 --exit"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "ethereum-cryptography": "^2.0.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "chai": "^4.3.7",
+    "eslint": "^8.38.0",
+    "mocha": "^10.2.0",
+    "prettier": "^2.8.7"
+  }
+}
