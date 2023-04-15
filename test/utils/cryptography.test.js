@@ -1,6 +1,5 @@
 const { expect } = require("chai");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
-const { publicKeyConvert } = require("ethereum-cryptography/secp256k1-compat");
 const { toHex } = require("ethereum-cryptography/utils");
 const {
     hashSha256,
@@ -92,6 +91,17 @@ describe("Cryptography", function () {
             expect(compressedPublicKey).has.length(33);
             expect(address).has.length(40);
             expect(address.toUpperCase()).to.be.equal(EXPECTED_ADDRESS.toUpperCase());
+        });
+
+        it("should generate private key", async function () {
+            // Given - When - Then
+            const privateKey = secp256k1.utils.randomPrivateKey();
+            const publicKey = secp256k1.getPublicKey(privateKey, false);
+            const address = getAddressFromPublicKey(publicKey);
+
+            console.log("private key:", toHex(privateKey));
+            console.log("public key:", toHex(publicKey));
+            console.log("address: ", address);
         });
     });
 });
