@@ -1,6 +1,8 @@
 const { expect } = require("chai");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
+
 const { toHex } = require("ethereum-cryptography/utils");
+
 const { hashSha256, hashKeccak256, signSecp256k1, getAddressFromPublicKey } = require("../../src/utils/cryptography");
 
 describe("Cryptography", function () {
@@ -88,7 +90,7 @@ describe("Cryptography", function () {
         });
 
         it("should generate key, sign and verify", async function () {
-            // Given - When - Then
+            // Given - When
             const privateKey = secp256k1.utils.randomPrivateKey();
             const publicKey = secp256k1.getPublicKey(privateKey, false);
             const address = getAddressFromPublicKey(publicKey);
@@ -97,13 +99,24 @@ describe("Cryptography", function () {
             console.log("public key:", toHex(publicKey), `- ${publicKey.length} bytes`);
             console.log("address:", toHex(address), `- ${address.length} bytes`);
 
+            // Then
+            expect(privateKey).has.length(32);
+            expect(publicKey).has.length(65);
+            expect(address).has.length(20);
+
+            // Given - When
             const message = { text: "this is a very important message", important: true };
             const messageHash = hashKeccak256(JSON.stringify(message));
             const signature = signSecp256k1(messageHash, privateKey);
             const signatureHex = signature.toCompactHex();
+            const recoveryBit = signature.recovery;
 
             console.log("signature:", signatureHex, `- ${signature.toCompactRawBytes().length} bytes`);
 
+            // Then
+            expect(signature.toCompactRawBytes()).has.length(64);
+
+            // Given - When
             const isVerifiedTrue = secp256k1.verify(signatureHex, messageHash, publicKey);
             console.log("verified yes:", isVerifiedTrue);
 
@@ -111,6 +124,18 @@ describe("Cryptography", function () {
             const badMessageHash = hashKeccak256(JSON.stringify(badMessage));
             const isVerifiedFalse = secp256k1.verify(signatureHex, badMessageHash, publicKey);
             console.log("verified no", isVerifiedFalse);
+
+            // Then
+            expect(isVerifiedTrue).to.be.true;
+            expect(isVerifiedFalse).to.be.false;
+
+            // Given - When
+            const signatureFromHex = secp256k1.Signature.fromCompact(signatureHex).addRecoveryBit(recoveryBit);
+            const recoveredPublicKey = signatureFromHex.recoverPublicKey(messageHash).toRawBytes(false);
+            console.log("recovered public key:", toHex(recoveredPublicKey), `- ${recoveredPublicKey.length} bytes`);
+
+            // Then
+            expect(toHex(publicKey)).to.be.equal(toHex(recoveredPublicKey));
         });
     });
 });
