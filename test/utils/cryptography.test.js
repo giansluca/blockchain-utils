@@ -47,10 +47,10 @@ describe("Cryptography", function () {
             const signature = signSecp256k1(hash, PRIVATE_KEY);
 
             const recoveredPublicKey = signature.recoverPublicKey(hash).toRawBytes();
-            const isSigned = secp256k1.verify(signature, hash, recoveredPublicKey);
+            const isVerified = secp256k1.verify(signature, hash, recoveredPublicKey);
 
             // Then
-            expect(isSigned).to.be.true;
+            expect(isVerified).to.be.true;
             expect(recoveredPublicKey).has.length(33);
             expect(toHex(publicKey)).to.be.equal(toHex(recoveredPublicKey));
         });
@@ -68,8 +68,8 @@ describe("Cryptography", function () {
 
             // Then
             expect(unCompressedPublicKey).has.length(65);
-            expect(address).has.length(40);
-            expect(address.toUpperCase()).to.be.equal(EXPECTED_ADDRESS.toUpperCase());
+            expect(address).has.length(20);
+            expect(toHex(address).toUpperCase()).to.be.equal(EXPECTED_ADDRESS.toUpperCase());
         });
 
         it("should extract the Ethereum address from compressed public key", async function () {
@@ -83,19 +83,34 @@ describe("Cryptography", function () {
 
             // Then
             expect(compressedPublicKey).has.length(33);
-            expect(address).has.length(40);
-            expect(address.toUpperCase()).to.be.equal(EXPECTED_ADDRESS.toUpperCase());
+            expect(address).has.length(20);
+            expect(toHex(address).toUpperCase()).to.be.equal(EXPECTED_ADDRESS.toUpperCase());
         });
 
-        it("should generate private key", async function () {
+        it("should generate key, sign and verify", async function () {
             // Given - When - Then
             const privateKey = secp256k1.utils.randomPrivateKey();
             const publicKey = secp256k1.getPublicKey(privateKey, false);
             const address = getAddressFromPublicKey(publicKey);
 
-            console.log("private key:", toHex(privateKey));
-            console.log("public key:", toHex(publicKey));
-            console.log("address: ", address);
+            console.log("private key:", toHex(privateKey), `- ${privateKey.length} bytes`);
+            console.log("public key:", toHex(publicKey), `- ${publicKey.length} bytes`);
+            console.log("address:", toHex(address), `- ${address.length} bytes`);
+
+            const message = { text: "this is a very important message", important: true };
+            const messageHash = hashKeccak256(JSON.stringify(message));
+            const signature = signSecp256k1(messageHash, privateKey);
+            const signatureHex = signature.toCompactHex();
+
+            console.log("signature:", signatureHex, `- ${signature.toCompactRawBytes().length} bytes`);
+
+            const isVerifiedTrue = secp256k1.verify(signatureHex, messageHash, publicKey);
+            console.log("verified yes:", isVerifiedTrue);
+
+            const badMessage = { text: "this is a very bad important message", important: true };
+            const badMessageHash = hashKeccak256(JSON.stringify(badMessage));
+            const isVerifiedFalse = secp256k1.verify(signatureHex, badMessageHash, publicKey);
+            console.log("verified no", isVerifiedFalse);
         });
     });
 });

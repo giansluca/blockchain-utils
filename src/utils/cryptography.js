@@ -1,7 +1,7 @@
 const { sha256 } = require("ethereum-cryptography/sha256");
 const { keccak256 } = require("ethereum-cryptography/keccak");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
-const { utf8ToBytes, toHex } = require("ethereum-cryptography/utils");
+const { utf8ToBytes } = require("ethereum-cryptography/utils");
 const { publicKeyConvert } = require("ethereum-cryptography/secp256k1-compat");
 
 function hashSha256(message) {
@@ -22,6 +22,8 @@ function hashKeccak256(message) {
  *
  * Public keys are 65 bytes (uncompressed form) or 33 bytes (compressed form) long
  * first byte is a prefix. 130 or 66 bytes in hex
+ *
+ * Signature  is 64 bytes, 128 bytes in hex
  */
 function signSecp256k1(hash, PRIVATE_KEY) {
     const signature = secp256k1.sign(hash, PRIVATE_KEY);
@@ -48,7 +50,7 @@ function getAddressFromPublicKey(publicKey) {
     const hashKey = keccak256(key);
     const address = hashKey.slice(hashKey.length - 20, key.length);
 
-    return toHex(address);
+    return address;
 }
 
 function decompressPublicKey(publicKey) {
