@@ -1,13 +1,7 @@
 const { expect } = require("chai");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
 const { toHex } = require("ethereum-cryptography/utils");
-const {
-    hashSha256,
-    hashKeccak256,
-    signSecp256k1,
-    getAddressFromPublicKey,
-    decompressPublicKey,
-} = require("../../src/utils/cryptography");
+const { hashSha256, hashKeccak256, signSecp256k1, getAddressFromPublicKey } = require("../../src/utils/cryptography");
 
 describe("Cryptography", function () {
     describe("Hash Message", function () {
