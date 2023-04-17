@@ -1,9 +1,8 @@
 const { expect } = require("chai");
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
-
 const { toHex } = require("ethereum-cryptography/utils");
-
 const { hashSha256, hashKeccak256, signSecp256k1, getAddressFromPublicKey } = require("../../src/utils/cryptography");
+const { Signature } = secp256k1;
 
 describe("Cryptography", function () {
     describe("Hash Message", function () {
@@ -130,7 +129,7 @@ describe("Cryptography", function () {
             expect(isVerifiedFalse).to.be.false;
 
             // Given - When
-            const signatureFromHex = secp256k1.Signature.fromCompact(signatureHex).addRecoveryBit(recoveryBit);
+            const signatureFromHex = Signature.fromCompact(signatureHex).addRecoveryBit(recoveryBit);
             const recoveredPublicKey = signatureFromHex.recoverPublicKey(messageHash).toRawBytes(false);
             console.log("recovered public key:", toHex(recoveredPublicKey), `- ${recoveredPublicKey.length} bytes`);
 
