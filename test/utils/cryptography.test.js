@@ -106,10 +106,10 @@ describe("Cryptography", function () {
             // Given - When
             const message = { text: "this is a very important message", important: true };
             const messageHash = hashKeccak256(JSON.stringify(message));
+
             const signature = signSecp256k1(messageHash, privateKey);
             const signatureHex = signature.toCompactHex();
             const recoveryBit = signature.recovery;
-
             console.log("signature:", signatureHex, `- ${signature.toCompactRawBytes().length} bytes`);
 
             // Then
