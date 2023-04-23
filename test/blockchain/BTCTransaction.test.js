@@ -31,7 +31,7 @@ describe("BTCTransaction", function () {
 
         txo2.spend();
 
-        // When - Then
+        // When
         const tx = new BTCTransaction([txo1, txo2, txo3], [outputTXO1]);
 
         let ex;
@@ -41,6 +41,28 @@ describe("BTCTransaction", function () {
             ex = _ex;
         }
 
+        // Then
         expect(ex.message).to.be.equal("UTXO already spent");
+    });
+
+    it("should throw an error on execute with insufficient UTXOs", () => {
+        // Given
+        const txo1 = new TXO(fromAddress, 3);
+        const txo2 = new TXO(fromAddress, 3);
+        const txo3 = new TXO(fromAddress, 3);
+        const outputTXO1 = new TXO(toAddress, 10);
+
+        // When
+        const tx = new BTCTransaction([txo1, txo2, txo3], [outputTXO1]);
+
+        let ex;
+        try {
+            tx.execute();
+        } catch (_ex) {
+            ex = _ex;
+        }
+
+        // Then
+        expect(ex.message).to.be.equal("Total UTXOs input is less than total UTXOs output");
     });
 });
