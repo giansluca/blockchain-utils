@@ -8,8 +8,6 @@ class Transaction {
         for (const inUTXO of this.inputUTXOs) {
             if (inUTXO.spent) throw new Error("UTXO already spent");
         }
-
-        console.log("OK");
     }
 }
 
