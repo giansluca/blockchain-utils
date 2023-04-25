@@ -2,6 +2,7 @@ class BTCTransaction {
     constructor(inputUTXOs, outputUTXOs) {
         this.inputUTXOs = inputUTXOs;
         this.outputUTXOs = outputUTXOs;
+        this.fee = 0;
     }
 
     execute() {
@@ -15,6 +16,10 @@ class BTCTransaction {
         this.outputUTXOs.forEach((outUTXO) => (totalOutputValue += outUTXO.amount));
 
         if (totalInputValue < totalOutputValue) throw new Error("Total UTXOs input is less than total UTXOs output");
+
+        if (totalInputValue > totalOutputValue) {
+            this.fee = totalInputValue - totalOutputValue;
+        }
 
         this.inputUTXOs.forEach((inUTXO) => {
             inUTXO.spend();

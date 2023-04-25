@@ -118,4 +118,34 @@ describe("BTCTransaction", function () {
             expect(txo4.spent).to.be.false;
         });
     });
+
+    describe("BTCTransaction fee", () => {
+        it("should have zero fee with no remainder", () => {
+            // Given
+            const txo1 = new TXO(fromAddress, 5);
+            const txo2 = new TXO(fromAddress, 5);
+            const outputTXO1 = new TXO(toAddress, 7);
+            const outputTXO2 = new TXO(fromAddress, 3);
+
+            // When
+            const tx = new BTCTransaction([txo1, txo2], [outputTXO1, outputTXO2]);
+            tx.execute();
+
+            expect(tx.fee).to.be.equal(0);
+        });
+
+        it("should have the remainder as the fee with some remainder", () => {
+            // Given
+            const txo1 = new TXO(fromAddress, 15);
+            const outputTXO1 = new TXO(toAddress, 7);
+            const outputTXO2 = new TXO(fromAddress, 6);
+
+            // When
+            const tx = new BTCTransaction([txo1], [outputTXO1, outputTXO2]);
+            tx.execute();
+
+            // Then
+            expect(tx.fee).to.be.equal(2);
+        });
+    });
 });
