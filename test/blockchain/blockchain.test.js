@@ -35,7 +35,7 @@ describe("Blockchain", function () {
         expect(chain).has.length(2);
     });
 
-    it("should a new block to our blockchain", function () {
+    it("should add a new block to our blockchain", function () {
         // Given
         const blockchain = new Blockchain();
         const genesisBlock = new Block(4);

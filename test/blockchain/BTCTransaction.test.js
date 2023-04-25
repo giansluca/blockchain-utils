@@ -65,4 +65,57 @@ describe("BTCTransaction", function () {
         // Then
         expect(ex.message).to.be.equal("Total UTXOs input is less than total UTXOs output");
     });
+
+    describe("BTCTransaction manage spending", function () {
+        // Given
+        const txo1 = new TXO(fromAddress, 5);
+        const txo2 = new TXO(fromAddress, 5);
+        const txo3 = new TXO(fromAddress, 3);
+        const txo4 = new TXO(fromAddress, 4);
+        const outputTXO1 = new TXO(toAddress, 7);
+        const outputTXO2 = new TXO(fromAddress, 3);
+
+        it("should mark both inputs as spent", () => {
+            // When
+            const tx = new BTCTransaction([txo1, txo2], [outputTXO1, outputTXO2]);
+            tx.execute();
+
+            // Then
+            expect(txo1.spent).to.be.true;
+            expect(txo2.spent).to.be.true;
+        });
+
+        it("should leave both inputs unspent if funds unavailable", () => {
+            // When
+            const tx = new BTCTransaction([txo3, txo4], [outputTXO1, outputTXO2]);
+
+            let ex;
+            try {
+                tx.execute();
+            } catch (_ex) {
+                ex = _ex;
+            }
+
+            // Then
+            expect(ex.message).to.be.equal("Total UTXOs input is less than total UTXOs output");
+            expect(txo3.spent).to.be.false;
+            expect(txo4.spent).to.be.false;
+        });
+
+        it("should leave valid inputs unspent if a double spend occurs", () => {
+            // When
+            const tx = new BTCTransaction([txo1, txo4], [outputTXO1, outputTXO2]);
+
+            let ex;
+            try {
+                tx.execute();
+            } catch (_ex) {
+                ex = _ex;
+            }
+
+            // Then
+            expect(ex.message).to.be.equal("UTXO already spent");
+            expect(txo4.spent).to.be.false;
+        });
+    });
 });

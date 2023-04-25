@@ -11,10 +11,14 @@ class BTCTransaction {
 
         let totalInputValue = 0;
         let totalOutputValue = 0;
-        this.inputUTXOs.forEach((item) => (totalInputValue += item.amount));
-        this.outputUTXOs.forEach((item) => (totalOutputValue += item.amount));
+        this.inputUTXOs.forEach((inUTXO) => (totalInputValue += inUTXO.amount));
+        this.outputUTXOs.forEach((outUTXO) => (totalOutputValue += outUTXO.amount));
 
         if (totalInputValue < totalOutputValue) throw new Error("Total UTXOs input is less than total UTXOs output");
+
+        this.inputUTXOs.forEach((inUTXO) => {
+            inUTXO.spend();
+        });
     }
 }
 
