@@ -13,7 +13,11 @@ class MerkleTree {
 
         const nextLayer = [];
         for (let i = 0; i < currentLayer.length; i += 2) {
-            if (i + 1 == currentLayer.length) break;
+            if (i + 1 == currentLayer.length) {
+                const oddNode = currentLayer[i];
+                nextLayer.push(oddNode);
+                break;
+            }
 
             const newNode = this.concat(currentLayer[i], currentLayer[i + 1]);
             nextLayer.push(newNode);
