@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const crypto = require("crypto");
-const MerkleTree = require("../../src/blockchain/MerkleTree");
+const { MerkleTree, verifyProof } = require("../../src/blockchain/MerkleTree");
 
 describe("Merkle Tree", function () {
     it("should handle the base case: [A]", function () {
@@ -90,6 +90,7 @@ describe("Merkle Tree", function () {
     });
 
     describe("merkle proof", function () {
+        // given
         const leaves = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
         const root = "eb100814abc896ab18bcf6c37b6550eeadeae0c312532286a4cf4be132ace526";
         const hashTree = new MerkleTree(leaves.map(sha256), concatHash);
@@ -98,6 +99,7 @@ describe("Merkle Tree", function () {
         describe("for each leaf", function () {
             leaves.forEach((leaf, i) => {
                 it(`should return a proof that calculates the root from leaf ${leaves[i]}`, function () {
+                    // when
                     const proof = hashTree.getProof(i);
                     const hashedProof = hashProof(leaf, proof).toString("hex");
 
@@ -113,8 +115,45 @@ describe("Merkle Tree", function () {
                         );
                     }
 
+                    // then
                     expect(hashedProof).to.be.equal(root);
                 });
+            });
+        });
+    });
+
+    describe("merkle proof verification", function () {
+        // given
+        const concat = (a, b) => `Hash(${a} + ${b})`;
+        const leaves = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
+        const root =
+            "Hash(Hash(Hash(Hash(A + B) + Hash(C + D)) + Hash(Hash(E + F) + Hash(G + H))) + Hash(Hash(I + J) + K))";
+
+        describe("untampered proofs", function () {
+            // when
+            const tree = new MerkleTree(leaves.slice(0), concat);
+
+            leaves.forEach((leaf, i) => {
+                it(`should verify the proof for leaf index ${i}`, function () {
+                    const proof = tree.getProof(i);
+                    const verified = verifyProof(proof, leaves[i], root, concat);
+
+                    // then
+                    expect(verified).to.be.true;
+                });
+            });
+        });
+
+        describe("tampered proofs", function () {
+            // when
+            const tree = new MerkleTree(leaves.slice(0), concat);
+
+            it("should not verify the proof", function () {
+                const proof = tree.getProof(2);
+                const verified = verifyProof(proof, leaves[3], root, concat);
+
+                // then
+                expect(verified).to.be.false;
             });
         });
     });

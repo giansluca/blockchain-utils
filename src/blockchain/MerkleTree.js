@@ -69,4 +69,18 @@ class MerkleTree {
     }
 }
 
-module.exports = MerkleTree;
+function verifyProof(proof, node, root, concat) {
+    let data = node;
+
+    for (let i = 0; i < proof.length; i++) {
+        const nodePair = proof[i].left ? [proof[i].data, data] : [data, proof[i].data];
+        data = concat(nodePair[0], nodePair[1]);
+    }
+
+    return root === data ? true : false;
+}
+
+module.exports = {
+    MerkleTree: MerkleTree,
+    verifyProof: verifyProof,
+};
