@@ -148,9 +148,40 @@ describe("Merkle Tree", function () {
             // when
             const tree = new MerkleTree(leaves.slice(0), concat);
 
-            it("should not verify the proof", function () {
+            it("should not verify the proof verifying a different node with a proof", function () {
                 const proof = tree.getProof(2);
                 const verified = verifyProof(proof, leaves[3], root, concat);
+
+                // then
+                expect(verified).to.be.false;
+            });
+
+            it("should not verify the proof verifying a different root", function () {
+                const proof = tree.getProof(2);
+                const badRoot =
+                    "Hash(Hash(Hash(Hash(A + C) + Hash(C + D)) + Hash(Hash(E + F) + Hash(G + H))) + Hash(Hash(I + J) + K))";
+
+                const verified = verifyProof(proof, leaves[2], badRoot, concat);
+
+                // then
+                expect(verified).to.be.false;
+            });
+
+            it("should not verify the proof flipping a nodes position", function () {
+                const proof = tree.getProof(3);
+                proof[1].left = !proof[1].left;
+
+                const verified = verifyProof(proof, leaves[3], root, concat);
+
+                // then
+                expect(verified).to.be.false;
+            });
+
+            it("should not verify the proof editing a hash", function () {
+                const proof = tree.getProof(5);
+                proof[2].data = "Q";
+
+                const verified = verifyProof(proof, leaves[5], root, concat);
 
                 // then
                 expect(verified).to.be.false;
