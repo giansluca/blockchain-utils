@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const TXO = require("../../src/blockchain/TXO");
+const TXO = require("../../src/BTC/TXO");
 
 describe("TXO", function () {
     it("should set 'owner' 'amount' and 'spent' properties", function () {

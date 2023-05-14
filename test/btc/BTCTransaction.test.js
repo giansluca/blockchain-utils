@@ -1,6 +1,6 @@
 const { expect } = require("chai");
-const BTCTransaction = require("../../src/blockchain/BTCTransaction");
-const TXO = require("../../src/blockchain/TXO");
+const BTCTransaction = require("../../src/btc/BTCTransaction");
+const TXO = require("../../src/btc/TXO");
 
 describe("BTCTransaction", function () {
     const fromAddress = "1DBS97W3jWw6FnAqdduK1NW6kFo3Aid1N6";

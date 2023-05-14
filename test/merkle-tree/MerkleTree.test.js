@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const crypto = require("crypto");
-const { MerkleTree, verifyProof } = require("../../src/blockchain/MerkleTree");
+const { MerkleTree, verifyProof } = require("../../src/merkle-tree/MerkleTree");
 
 describe("Merkle Tree", function () {
     it("should handle the base case: [A]", function () {
