@@ -90,7 +90,7 @@ describe("Merkle Tree", function () {
     });
 
     describe("merkle proof", function () {
-        // given
+        // Given
         const leaves = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
         const root = "eb100814abc896ab18bcf6c37b6550eeadeae0c312532286a4cf4be132ace526";
         const hashTree = new MerkleTree(leaves.map(sha256), concatHash);
@@ -99,7 +99,7 @@ describe("Merkle Tree", function () {
         describe("for each leaf", function () {
             leaves.forEach((leaf, i) => {
                 it(`should return a proof that calculates the root from leaf ${leaves[i]}`, function () {
-                    // when
+                    // When
                     const proof = hashTree.getProof(i);
                     const hashedProof = hashProof(leaf, proof).toString("hex");
 
@@ -115,7 +115,7 @@ describe("Merkle Tree", function () {
                         );
                     }
 
-                    // then
+                    // Then
                     expect(hashedProof).to.be.equal(root);
                 });
             });
@@ -123,14 +123,14 @@ describe("Merkle Tree", function () {
     });
 
     describe("merkle proof verification", function () {
-        // given
+        // Given
         const concat = (a, b) => `Hash(${a} + ${b})`;
         const leaves = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
         const root =
             "Hash(Hash(Hash(Hash(A + B) + Hash(C + D)) + Hash(Hash(E + F) + Hash(G + H))) + Hash(Hash(I + J) + K))";
 
         describe("untampered proofs", function () {
-            // when
+            // When
             const tree = new MerkleTree(leaves.slice(0), concat);
 
             leaves.forEach((leaf, i) => {
@@ -138,21 +138,21 @@ describe("Merkle Tree", function () {
                     const proof = tree.getProof(i);
                     const verified = verifyProof(proof, leaves[i], root, concat);
 
-                    // then
+                    // Then
                     expect(verified).to.be.true;
                 });
             });
         });
 
         describe("tampered proofs", function () {
-            // when
+            // When
             const tree = new MerkleTree(leaves.slice(0), concat);
 
             it("should not verify the proof verifying a different node with a proof", function () {
                 const proof = tree.getProof(2);
                 const verified = verifyProof(proof, leaves[3], root, concat);
 
-                // then
+                // Then
                 expect(verified).to.be.false;
             });
 
@@ -163,7 +163,7 @@ describe("Merkle Tree", function () {
 
                 const verified = verifyProof(proof, leaves[2], badRoot, concat);
 
-                // then
+                // Then
                 expect(verified).to.be.false;
             });
 
@@ -173,7 +173,7 @@ describe("Merkle Tree", function () {
 
                 const verified = verifyProof(proof, leaves[3], root, concat);
 
-                // then
+                // Then
                 expect(verified).to.be.false;
             });
 
@@ -183,7 +183,7 @@ describe("Merkle Tree", function () {
 
                 const verified = verifyProof(proof, leaves[5], root, concat);
 
-                // then
+                // Then
                 expect(verified).to.be.false;
             });
         });
