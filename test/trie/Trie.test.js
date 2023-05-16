@@ -25,5 +25,36 @@ describe("Trie", () => {
             expect(firstNode.children["E"]).to.exist;
             expect(firstNode.isWord).to.be.false;
         });
+
+        it("should connect the root to the second letter", () => {
+            // Given
+            const trie = new Trie();
+            trie.insert("HEY");
+
+            // When
+            const firstNode = trie.root.children["H"];
+            const secondNode = firstNode.children["E"];
+
+            // Then
+            expect(secondNode.key).to.be.equals("E");
+            expect(secondNode.children["Y"]).to.exist;
+            expect(secondNode.isWord).to.be.false;
+        });
+
+        it("should connect the root to the third letter", () => {
+            // Given
+            const trie = new Trie();
+            trie.insert("HEY");
+
+            // When
+            const firstNode = trie.root.children["H"];
+            const secondNode = firstNode.children["E"];
+            const thirdNode = secondNode.children["Y"];
+
+            // Then
+            expect(thirdNode.key).to.be.equals("Y");
+            expect(Object.keys(thirdNode.children).length).to.be.equal(0);
+            expect(thirdNode.isWord).to.be.true;
+        });
     });
 });
