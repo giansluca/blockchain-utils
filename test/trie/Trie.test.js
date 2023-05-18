@@ -59,6 +59,7 @@ describe("Trie", () => {
     });
 
     describe("with three words", () => {
+        // Given
         let trie = new Trie();
         let words = ["helipad", "hello", "hermit"];
 
@@ -66,16 +67,41 @@ describe("Trie", () => {
         trie.insert("hello");
         trie.insert("hermit");
 
+        // When
         words.forEach((word) => {
             describe(`for ${word}`, () => {
                 it("should connect to the final letter", () => {
                     const splitWord = word.split("");
                     const finalNode = splitWord.reduce((node, letter) => node.children[letter], trie.root);
 
+                    // Then
                     expect(finalNode).to.exist;
                     expect(finalNode.isWord).to.be.true;
                 });
             });
+        });
+    });
+
+    describe("with a single word, searching", () => {
+        it("should properly detect words that are contained", () => {
+            // Given - When
+            const trie = new Trie();
+            trie.insert("hey");
+
+            // Then
+            expect(trie.contains("hey")).to.be.true;
+        });
+
+        it("should properly detect words that are not contained", () => {
+            // Given - When
+            const trie = new Trie();
+            trie.insert("hey");
+
+            // Then
+            expect(trie.contains("hello")).to.be.false;
+            expect(trie.contains("he")).to.be.false;
+            expect(trie.contains("hi")).to.be.false;
+            expect(trie.contains("heya")).to.be.false;
         });
     });
 });
