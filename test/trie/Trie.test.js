@@ -57,4 +57,25 @@ describe("Trie", () => {
             expect(thirdNode.isWord).to.be.true;
         });
     });
+
+    describe("with three words", () => {
+        let trie = new Trie();
+        let words = ["helipad", "hello", "hermit"];
+
+        trie.insert("helipad");
+        trie.insert("hello");
+        trie.insert("hermit");
+
+        words.forEach((word) => {
+            describe(`for ${word}`, () => {
+                it("should connect to the final letter", () => {
+                    const splitWord = word.split("");
+                    const finalNode = splitWord.reduce((node, letter) => node.children[letter], trie.root);
+
+                    expect(finalNode).to.exist;
+                    expect(finalNode.isWord).to.be.true;
+                });
+            });
+        });
+    });
 });
