@@ -25,8 +25,14 @@ class MerkleTree {
     _getProof(currentLayer, currentIndex, proof) {
         if (currentLayer.length == 1) return;
 
-        const currentNodeIsOdd = this._isOddNode(currentLayer, currentIndex);
-        if (!currentNodeIsOdd) {
+        // Since our merkle tree is a binary tree, each layer combines its pairs,
+        // resulting in half the number of nodes.
+        // This means we should cut our index in half and round down.
+        const nextLayer = this._getNextLayer(currentLayer);
+        const nextIndex = Math.floor(currentIndex / 2);
+
+        const currentNodeIsFinalSolitary = this._isFinalSolitaryNode(currentLayer, currentIndex);
+        if (!currentNodeIsFinalSolitary) {
             const currentNodeIsLeft = this._isEvenIndex(currentIndex);
             const proofNode = currentNodeIsLeft ? currentLayer[currentIndex + 1] : currentLayer[currentIndex - 1];
             const proofNodeIsLeft = !currentNodeIsLeft;
@@ -34,37 +40,33 @@ class MerkleTree {
             proof.push({ data: proofNode, left: proofNodeIsLeft });
         }
 
-        // Since our merkle tree is a binary tree, each layer combines its pairs resulting in half the number of nodes.
-        // This means we should cut our index in half and round down.
-
-        const nextLayer = this._getNextLayer(currentLayer);
-        const nextIndex = Math.floor(currentIndex / 2);
         this._getProof(nextLayer, nextIndex, proof);
     }
 
     _getNextLayer(currentLayer) {
         const nextLayer = [];
-        for (let i = 0; i < currentLayer.length; i += 2) {
-            if (this._isOddNode(currentLayer, i)) {
-                const oddNode = currentLayer[i];
-                nextLayer.push(oddNode);
-                break;
-            }
 
-            const newNode = this.concat(currentLayer[i], currentLayer[i + 1]);
-            nextLayer.push(newNode);
+        for (let i = 0; i < currentLayer.length; i += 2) {
+            const left = currentLayer[i];
+            const right = currentLayer[i + 1];
+
+            if (right) {
+                nextLayer.push(this.concat(left, right));
+            } else {
+                nextLayer.push(left);
+            }
         }
 
         return nextLayer;
     }
 
-    _isOddNode(currentLayer, index) {
+    _isFinalSolitaryNode(currentLayer, index) {
         if (index + 1 == currentLayer.length && this._isEvenIndex(index)) return true;
         else return false;
     }
 
-    _isEvenIndex(number) {
-        if (number % 2 == 0) return true;
+    _isEvenIndex(index) {
+        if (index % 2 == 0) return true;
         else return false;
     }
 }

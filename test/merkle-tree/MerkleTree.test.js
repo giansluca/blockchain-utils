@@ -93,18 +93,18 @@ describe("Merkle Tree", function () {
         // Given
         const leaves = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
         const root = "eb100814abc896ab18bcf6c37b6550eeadeae0c312532286a4cf4be132ace526";
-        const hashTree = new MerkleTree(leaves.map(sha256), concatHash);
-        const lettersTree = new MerkleTree(leaves, concatLetters);
+        const merkleHashTree = new MerkleTree(leaves.map(sha256), concatHash);
+        const merkleLettersTree = new MerkleTree(leaves, concatLetters);
 
         describe("for each leaf", function () {
             leaves.forEach((leaf, i) => {
                 it(`should return a proof that calculates the root from leaf ${leaves[i]}`, function () {
                     // When
-                    const proof = hashTree.getProof(i);
+                    const proof = merkleHashTree.getProof(i);
                     const hashedProof = hashProof(leaf, proof).toString("hex");
 
                     if (hashedProof !== root) {
-                        const lettersProof = lettersTree.getProof(i);
+                        const lettersProof = merkleLettersTree.getProof(i);
 
                         console.log(
                             "The resulting hash of your proof is wrong. \n" +
@@ -200,7 +200,8 @@ function concatHash(left, right) {
     if (!left) throw new Error("The concat function expects two hash arguments, the first was not received.");
     if (!right) throw new Error("The concat function expects two hash arguments, the second was not received.");
 
-    return sha256(Buffer.concat([left, right]));
+    const buffers = [left, right];
+    return sha256(Buffer.concat(buffers));
 }
 
 // the concat function we use to show the merkle root calculation
