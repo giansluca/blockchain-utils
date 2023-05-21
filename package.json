@@ -1,8 +1,7 @@
 {
-    "name": "y",
+    "name": "blockchain-utils",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
     "scripts": {
         "test": "mocha test/**/*.js --recursive --timeout 60000 --exit",
         "lint": "eslint src"
