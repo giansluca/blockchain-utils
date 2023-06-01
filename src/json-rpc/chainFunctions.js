@@ -3,6 +3,16 @@ const config = require("../config");
 
 const ALCHEMY_URL = config.secret.alchemyUrl;
 
+async function getCurrentBlockNumber() {
+    const { data } = await axios.post(ALCHEMY_URL, {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_blockNumber",
+    });
+
+    return data;
+}
+
 async function getBlockByNumber(blockNumber) {
     const blockNumberHex = `0x${blockNumber.toString(16)}`;
 
@@ -30,11 +40,12 @@ async function getBalance(address) {
     return data;
 }
 
-async function getCurrentBlockNumber() {
+async function getNonce(address) {
     const { data } = await axios.post(ALCHEMY_URL, {
         jsonrpc: "2.0",
         id: 1,
-        method: "eth_blockNumber",
+        method: "eth_getTransactionCount",
+        params: [address, "latest"],
     });
 
     return data;
@@ -44,4 +55,5 @@ module.exports = {
     getBlockByNumber: getBlockByNumber,
     getBalance: getBalance,
     getCurrentBlockNumber: getCurrentBlockNumber,
+    getNonce: getNonce,
 };

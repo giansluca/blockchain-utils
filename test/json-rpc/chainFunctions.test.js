@@ -1,7 +1,15 @@
 const { expect } = require("chai");
-const { getBalance, getBlockByNumber, getCurrentBlockNumber } = require("../../src/json-rpc/chainFunctions");
+const { getBalance, getBlockByNumber, getCurrentBlockNumber, getNonce } = require("../../src/json-rpc/chainFunctions");
 
 describe("Json-Rpc", function () {
+    it("should get current block number", async function () {
+        // Given - When
+        const currentBlockNumber = await getCurrentBlockNumber();
+
+        // Then
+        expect(currentBlockNumber.result).to.not.be.undefined;
+    });
+
     it("should get a block by number", async function () {
         // Given
         const blockNumber = 46147;
@@ -21,19 +29,21 @@ describe("Json-Rpc", function () {
 
         // When
         const balance = await getBalance(address);
+        const parsedBalance = parseInt(balance.result);
 
         // Then
-        expect(balance.result).to.not.be.undefined;
+        expect(parsedBalance).to.not.be.undefined;
     });
 
-    it("should get current block number", async function () {
-        // Given - When
-        const currentBlockNumber = await getCurrentBlockNumber();
+    it("should get transaction count", async function () {
+        // Given
+        const address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
 
-        console.log(currentBlockNumber.result);
-        console.log(parseInt(currentBlockNumber.result));
+        // When
+        const nonce = await getNonce(address);
+        const parsedNonce = parseInt(nonce.result);
 
         // Then
-        expect(currentBlockNumber.result).to.not.be.undefined;
+        expect(parsedNonce).to.not.be.undefined;
     });
 });
