@@ -40,7 +40,7 @@ async function getBalance(address) {
     return data;
 }
 
-async function getNonce(address) {
+async function getTransactionCount(address) {
     const { data } = await axios.post(ALCHEMY_URL, {
         jsonrpc: "2.0",
         id: 1,
@@ -51,9 +51,50 @@ async function getNonce(address) {
     return data;
 }
 
+async function getBlockTransactionsCount(blockNumber) {
+    const blockNumberHex = `0x${blockNumber.toString(16)}`;
+
+    const { data } = await axios.post(ALCHEMY_URL, {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_getBlockTransactionCountByNumber",
+        params: [blockNumberHex],
+    });
+
+    return data;
+}
+
+async function getTotalBalance(addresses) {
+    const batch = [];
+
+    let i = 0;
+    for (const address of addresses) {
+        const requestBody = {
+            jsonrpc: "2.0",
+            id: ++i,
+            method: "eth_getBalance",
+            params: [address, "latest"],
+        };
+
+        batch.push(requestBody);
+    }
+
+    const response = await axios.post(ALCHEMY_URL, batch);
+
+    let totalBalance = 0;
+    for (const res of response.data) {
+        const parsedRes = parseInt(res.result);
+        totalBalance += parsedRes;
+    }
+
+    return totalBalance;
+}
+
 module.exports = {
     getBlockByNumber: getBlockByNumber,
     getBalance: getBalance,
     getCurrentBlockNumber: getCurrentBlockNumber,
-    getNonce: getNonce,
+    getTransactionCount: getTransactionCount,
+    getBlockTransactionsCount: getBlockTransactionsCount,
+    getTotalBalance: getTotalBalance,
 };
