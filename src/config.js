@@ -14,6 +14,8 @@ const config = {
     },
     secret: {
         alchemyUrl: process.env.ALCHEMY_MAINNET_URL,
+        alchemyApyKey: process.env.API_KEY,
+        accountPrivateKey: process.env.ACCOUNT_PRIVATE_KEY,
     },
 };
 
