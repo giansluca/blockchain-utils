@@ -6,6 +6,7 @@ const {
     getTransactionCount,
     getBlockTransactionsCount,
     getTotalBalance,
+    sendTransaction,
 } = require("../../src/json-rpc/chainFunctions");
 
 describe("Json-Rpc", function () {
@@ -81,5 +82,18 @@ describe("Json-Rpc", function () {
 
         // Then
         expect(totalBalance).to.not.be.undefined;
+    });
+
+    it.skip("should send a transaction", async function () {
+        // Given
+        const recipientAddress = "0x5E5967691B984F5E6549b8C5699b9F51ceD553eA"; // the third account
+        const amount = "0.001"; // 0.002 ETH being sent
+
+        // When
+        const tx = await sendTransaction(recipientAddress, amount);
+        console.log(`https://sepolia.etherscan.io/tx/${tx.hash}`);
+
+        // Then
+        expect(tx).to.not.be.undefined;
     });
 });

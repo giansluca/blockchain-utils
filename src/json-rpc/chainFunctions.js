@@ -1,7 +1,10 @@
 const axios = require("axios");
 const config = require("../config");
+const { Alchemy, Network, Wallet, Utils } = require("alchemy-sdk");
 
 const ALCHEMY_URL = config.secret.alchemyUrl;
+const ALCHEMY_API_KEY = config.secret.alchemyApyKey;
+const ACCOUNT_PRIVATE_KEY = config.secret.accountPrivateKey;
 
 async function getCurrentBlockNumber() {
     const { data } = await axios.post(ALCHEMY_URL, {
@@ -90,6 +93,33 @@ async function getTotalBalance(addresses) {
     return totalBalance;
 }
 
+async function sendTransaction(recipientAddress, amount) {
+    const settings = {
+        apiKey: ALCHEMY_API_KEY,
+        network: Network.ETH_SEPOLIA,
+    };
+
+    const alchemy = new Alchemy(settings);
+    let wallet = new Wallet(ACCOUNT_PRIVATE_KEY);
+    const nonce = await alchemy.core.getTransactionCount(wallet.address, "latest");
+
+    let transaction = {
+        to: recipientAddress,
+        value: Utils.parseEther(amount),
+        gasLimit: "21000",
+        maxPriorityFeePerGas: Utils.parseUnits("5", "gwei"),
+        maxFeePerGas: Utils.parseUnits("20", "gwei"),
+        nonce: nonce,
+        type: 2,
+        chainId: 11155111, // sepolia transaction
+    };
+    let signedTransaction = await wallet.signTransaction(transaction);
+    console.log("Raw tx: ", signedTransaction);
+
+    let tx = await alchemy.core.sendTransaction(signedTransaction);
+    return tx;
+}
+
 module.exports = {
     getBlockByNumber: getBlockByNumber,
     getBalance: getBalance,
@@ -97,4 +127,5 @@ module.exports = {
     getTransactionCount: getTransactionCount,
     getBlockTransactionsCount: getBlockTransactionsCount,
     getTotalBalance: getTotalBalance,
+    sendTransaction: sendTransaction,
 };
