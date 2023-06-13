@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { wallet1, wallet2, signaturePromise } = require("../../src/ethers/wallet");
-const { Wallet, HDNodeWallet, Transaction, encodeBytes32String } = require("ethers");
+const { Wallet, HDNodeWallet, Transaction } = require("ethers");
 
 describe("wallets", () => {
     describe("wallet 1", () => {
