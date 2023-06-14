@@ -87,7 +87,7 @@ describe("Json-Rpc", function () {
     it.skip("should send a transaction", async function () {
         // Given
         const recipientAddress = "0x5E5967691B984F5E6549b8C5699b9F51ceD553eA"; // the third account
-        const amount = "0.001"; // 0.002 ETH being sent
+        const amount = "0.001"; // 0.001 ETH being sent
 
         // When
         const tx = await sendTransaction(recipientAddress, amount);
