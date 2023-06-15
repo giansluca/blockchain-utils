@@ -1,9 +1,9 @@
 const { expect } = require("chai");
-const sendEther = require("../../src/ethers/sendEthers");
-const { InfuraProvider, parseEther } = require("ethers");
+const { sendEther, findMyBalance } = require("../../src/ethers/sendEthers");
+const { InfuraProvider, parseEther, formatEther } = require("ethers");
 const config = require("../../src/config");
 
-describe("sendEther", () => {
+describe("ether operations", () => {
     it.skip("should resolve with a transaction", async () => {
         // Given
         const provider = new InfuraProvider("sepolia", config.secret.infuraApiKey);
@@ -22,5 +22,15 @@ describe("sendEther", () => {
         const receipt = await provider.waitForTransaction(tx.hash);
         expect(receipt).to.not.be.undefined;
         expect(receipt.blockNumber).to.not.be.undefined;
+    });
+
+    it("should get the balance of a private key", async () => {
+        // Given - When
+        const balance = await findMyBalance();
+
+        console.log(`balance is: ${formatEther(balance)}`);
+
+        // Then
+        expect(balance).to.not.be.undefined;
     });
 });

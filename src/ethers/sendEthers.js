@@ -16,4 +16,15 @@ async function sendEther({ amount, to }) {
     return tx;
 }
 
-module.exports = sendEther;
+async function findMyBalance() {
+    const provider = new InfuraProvider("sepolia", config.secret.infuraApiKey);
+    const signer = new Wallet(config.secret.accountPrivateKey, provider);
+
+    const balance = await provider.getBalance(signer.getAddress());
+    return balance;
+}
+
+module.exports = {
+    sendEther: sendEther,
+    findMyBalance: findMyBalance,
+};
