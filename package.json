@@ -4,7 +4,8 @@
     "description": "",
     "scripts": {
         "test": "mocha test/**/*.js --recursive --timeout 60000 --exit",
-        "lint": "eslint src"
+        "lint": "eslint src",
+        "ganache": "ganache"
     },
     "author": "",
     "license": "ISC",
@@ -14,7 +15,8 @@
         "crypto-js": "^4.1.1",
         "dotenv": "^16.0.3",
         "ethereum-cryptography": "^2.0.0",
-        "ethers": "^6.5.1"
+        "ethers": "^6.5.1",
+        "ganache": "^7.8.0"
     },
     "devDependencies": {
         "@faker-js/faker": "^7.6.0",
